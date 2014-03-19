@@ -57,6 +57,11 @@ public class OffHeapDefaultDataContainer implements OffHeapDataContainer {
            int segmentsSize) {
        try {
            long t = System.currentTimeMillis();
+           System.out.println("OpenHFT SHMBuilder starting: /dev/shmSHM/bondVO.@t="+t+"  entries=["+
+                   (
+                           (entries!=null) ? entries : "NULL"
+                   ) +
+                   "]");
            ConcurrentMap<String, BondVOInterface> entries = new SharedHashMapBuilder()
                    .generatedValueType(Boolean.TRUE)
                    .entrySize(entrysSize)
@@ -66,11 +71,13 @@ public class OffHeapDefaultDataContainer implements OffHeapDataContainer {
                            String.class,
                            BondVOInterface.class
                    );
-           System.out.println("OpenHFT /dev/shmSHM/bondVO.@t="+t+"  entries=["+
+           Thread.sleep(2000);
+           System.out.println("OpenHFT SHMBuilder done: /dev/shmSHM/bondVO.@t="+t+"  entries=["+
                    (
                    (entries!=null) ? entries : "NULL"
                     ) +
                    "]");
+           Thread.sleep(2000);
        } catch (Exception e) {
            e.printStackTrace();
        }
