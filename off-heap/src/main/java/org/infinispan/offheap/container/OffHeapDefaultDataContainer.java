@@ -68,7 +68,7 @@ public class OffHeapDefaultDataContainer implements OffHeapDataContainer {
                    );
            System.out.println("OpenHFT /dev/shmSHM/bondVO.@t="+t+"  entries=["+
                    (
-                   (entries!=null) ? entries.toString() : "NULL"
+                   (entries!=null) ? entries : "NULL"
                     ) +
                    "]");
        } catch (Exception e) {

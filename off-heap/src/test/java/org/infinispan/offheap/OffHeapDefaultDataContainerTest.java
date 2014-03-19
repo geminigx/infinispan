@@ -3,16 +3,12 @@ package org.infinispan.offheap;
 import net.openhft.lang.model.constraints.MaxSize;
 import org.infinispan.offheap.container.OffHeapDataContainer;
 import org.infinispan.offheap.container.OffHeapDefaultDataContainer;
-import org.infinispan.container.InternalEntryFactoryImpl;
-import org.infinispan.metadata.EmbeddedMetadata;
-import org.infinispan.container.entries.InternalCacheEntry;
 import org.infinispan.offheap.container.OffHeapInternalEntryFactoryImpl;
 import org.infinispan.offheap.container.entries.*;
 import org.infinispan.offheap.metadata.OffHeapEmbeddedMetadata;
 import org.infinispan.offheap.metadata.OffHeapMetadata;
 import org.infinispan.offheap.util.OffHeapCoreImmutables;
 import org.infinispan.test.AbstractInfinispanTest;
-import org.infinispan.offheap.util.OffHeapCoreImmutables;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -37,11 +33,18 @@ import static org.testng.AssertJUnit.assertEquals;
 public class OffHeapDefaultDataContainerTest extends AbstractInfinispanTest {
     OffHeapDataContainer dc;
 
+
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws InterruptedException {
+
+        Thread.sleep(2000);
         System.out.println("JCACHE DataContainer view of OpenHFT SHM is being created");
         dc = createContainer();
-        System.out.println("JCACHE DataContainer dc=["+dc.toString()+"]");
+        Thread.sleep(2000);
+        System.out.println("JCACHE DataContainer created dc=["+dc.toString()+"]");
+        Thread.sleep(2000);
+//        this.bondV = (BondVOInterface) dc.get("CUSIP1234");
+//        System.out.println("JCACHE returned a BondVOInterface reference from DataContainer dc=["+this.bondV+"]");
     }
 
     @AfterMethod
@@ -60,10 +63,10 @@ public class OffHeapDefaultDataContainerTest extends AbstractInfinispanTest {
                            256
                         );
         OffHeapInternalEntryFactoryImpl internalEntryFactory = new OffHeapInternalEntryFactoryImpl();
-        internalEntryFactory.injectTimeService(TIME_SERVICE);
-        dc.initialize(
-                null, null, internalEntryFactory, null, null, TIME_SERVICE
-        );
+//        internalEntryFactory.injectTimeService(TIME_SERVICE);
+//        dc.initialize(
+//                null, null, internalEntryFactory, null, null, TIME_SERVICE
+//        );
         return dc;
     }
 
@@ -71,269 +74,177 @@ public class OffHeapDefaultDataContainerTest extends AbstractInfinispanTest {
     public void testExpiredData() throws InterruptedException {
         //TODO: build a join to OpenHFT MetaData
         BondVOInterface bondV = new BondVOInterface() {
+            String symbol = "CUSIP1234";
             @Override
-            public void busyLockEntry() throws InterruptedException {
-
-            }
-
-            @Override
-            public void unlockEntry() {
-
-            }
+            public void busyLockEntry() throws InterruptedException {}
 
             @Override
-            public long getIssueDate() {
-                return 0;
-            }
+            public void unlockEntry() { }
 
             @Override
-            public void setIssueDate(long issueDate) {
-
-            }
+            public long getIssueDate() { return 0; }
+            @Override
+            public void setIssueDate(long issueDate) { }
 
             @Override
-            public long getMaturityDate() {
-                return 0;
-            }
+            public long getMaturityDate() { return 0;}
+            @Override
+            public void setMaturityDate(long maturityDate) {}
 
             @Override
-            public void setMaturityDate(long maturityDate) {
-
-            }
+            public long addAtomicMaturityDate(long toAdd) { return 0;}
 
             @Override
-            public long addAtomicMaturityDate(long toAdd) {
-                return 0;
-            }
+            public double getCoupon() { return 0; }
+            @Override
+            public void setCoupon(double coupon) {}
 
             @Override
-            public double getCoupon() {
-                return 0;
-            }
+            public double addAtomicCoupon(double toAdd) { return 0; }
 
             @Override
-            public void setCoupon(double coupon) {
-
-            }
+            public void setSymbol(@MaxSize(20) String symbol) {}
+            @Override
+            public String getSymbol() {return symbol; }
 
             @Override
-            public double addAtomicCoupon(double toAdd) {
-                return 0;
-            }
+            public void setMarketPxIntraDayHistoryAt(@MaxSize(7) int tradingDayHour, MarketPx mPx) { }
+            @Override
+            public MarketPx getMarketPxIntraDayHistoryAt(int tradingDayHour) {return null; }
 
             @Override
-            public void setSymbol(@MaxSize(20) String symbol) {
-
-            }
+            public boolean isExpired(long now) {return false;}
+            @Override
+            public boolean isExpired() { return false;}
+            @Override
+            public boolean canExpire() {return false; }
 
             @Override
-            public String getSymbol() {
-                return null;
-            }
+            public long getCreated() {return 0;}
+            @Override
+            public long getLastUsed() {return 0;}
+            @Override
+            public long getExpiryTime() {return 0;}
 
             @Override
-            public void setMarketPxIntraDayHistoryAt(@MaxSize(7) int tradingDayHour, MarketPx mPx) {
-
-            }
+            public void touch() {}
 
             @Override
-            public MarketPx getMarketPxIntraDayHistoryAt(int tradingDayHour) {
-                return null;
-            }
+            public void touch(long currentTimeMillis) {}
 
             @Override
-            public boolean isExpired(long now) {
-                return false;
-            }
+            public void reincarnate() {}
 
             @Override
-            public boolean isExpired() {
-                return false;
-            }
+            public void reincarnate(long now) { }
 
             @Override
-            public boolean canExpire() {
-                return false;
-            }
+            public OffHeapInternalCacheValue toInternalCacheValue() { return null;}
 
             @Override
-            public long getCreated() {
-                return 0;
-            }
+            public OffHeapInternalCacheEntry clone() { return null;}
 
             @Override
-            public long getLastUsed() {
-                return 0;
-            }
+            public boolean isNull() {return false;}
 
             @Override
-            public long getExpiryTime() {
-                return 0;
-            }
+            public boolean isChanged() { return false;}
 
             @Override
-            public void touch() {
-
-            }
+            public boolean isCreated() {return false; }
 
             @Override
-            public void touch(long currentTimeMillis) {
-
-            }
+            public boolean isRemoved() {return false;}
 
             @Override
-            public void reincarnate() {
-
-            }
+            public boolean isEvicted() {return false;}
 
             @Override
-            public void reincarnate(long now) {
-
-            }
+            public boolean isValid() {return false;}
 
             @Override
-            public OffHeapInternalCacheValue toInternalCacheValue() {
-                return null;
-            }
+            public boolean isLoaded() {return false; }
 
             @Override
-            public OffHeapInternalCacheEntry clone() {
-                return null;
-            }
+            public Object getKey() { return null;}
 
             @Override
-            public boolean isNull() {
-                return false;
-            }
+            public Object getValue() {return null;}
 
             @Override
-            public boolean isChanged() {
-                return false;
-            }
+            public long getLifespan() {return 0;}
 
             @Override
-            public boolean isCreated() {
-                return false;
-            }
+            public long getMaxIdle() {return 0; }
 
             @Override
-            public boolean isRemoved() {
-                return false;
-            }
+            public boolean skipLookup() {return false; }
 
             @Override
-            public boolean isEvicted() {
-                return false;
-            }
+            public Object setValue(Object value) { return null;}
 
             @Override
-            public boolean isValid() {
-                return false;
-            }
+            public void commit(OffHeapDataContainer container, OffHeapMetadata metadata) { }
 
             @Override
-            public boolean isLoaded() {
-                return false;
-            }
+            public void rollback() { }
 
             @Override
-            public Object getKey() {
-                return null;
-            }
+            public void setChanged(boolean changed) { }
 
             @Override
-            public Object getValue() {
-                return null;
-            }
+            public void setCreated(boolean created) {  }
 
             @Override
-            public long getLifespan() {
-                return 0;
-            }
+            public void setRemoved(boolean removed) { }
 
             @Override
-            public long getMaxIdle() {
-                return 0;
-            }
+            public void setEvicted(boolean evicted) { }
 
             @Override
-            public boolean skipLookup() {
-                return false;
-            }
+            public void setValid(boolean valid) { }
 
             @Override
-            public Object setValue(Object value) {
-                return null;
-            }
+            public void setLoaded(boolean loaded) { }
 
             @Override
-            public void commit(OffHeapDataContainer container, OffHeapMetadata metadata) {
-
-            }
+            public void setSkipLookup(boolean skipLookup) { }
 
             @Override
-            public void rollback() {
-
-            }
+            public boolean undelete(boolean doUndelete) {return false; }
 
             @Override
-            public void setChanged(boolean changed) {
-
-            }
+            public OffHeapMetadata getMetadata() { return null; }
 
             @Override
-            public void setCreated(boolean created) {
-
-            }
-
-            @Override
-            public void setRemoved(boolean removed) {
-
-            }
-
-            @Override
-            public void setEvicted(boolean evicted) {
-
-            }
-
-            @Override
-            public void setValid(boolean valid) {
-
-            }
-
-            @Override
-            public void setLoaded(boolean loaded) {
-
-            }
-
-            @Override
-            public void setSkipLookup(boolean skipLookup) {
-
-            }
-
-            @Override
-            public boolean undelete(boolean doUndelete) {
-                return false;
-            }
-
-            @Override
-            public OffHeapMetadata getMetadata() {
-                return null;
-            }
-
-            @Override
-            public void setMetadata(OffHeapMetadata metadata) {
-
-            }
+            public void setMetadata(OffHeapMetadata metadata) { }
         };
-        dc.put("IBMHY2044",bondV, new OffHeapEmbeddedMetadata.OffHeapBuilder().maxIdle(100, TimeUnit.MINUTES).build());
-        Thread.sleep(100);
 
+        Thread.sleep(2000);
+        System.out.println("Using JCACHE to put() BondVOInterface (IBMHY2044) --> DataContainer (bondV=["+bondV+"])");
+
+        Thread.sleep(2000);
+        //dc.put("IBMHY2044",bondV,null); //NPE
+        dc.put("IBMHY2044",bondV, new OffHeapEmbeddedMetadata.OffHeapBuilder().maxIdle(100, TimeUnit.MINUTES).build());
+        Thread.sleep(2000);
+        System.out.println("JCACHE put() the BondVOInterface (IBMHY2044) into DataContainer bondV=["+bondV+"]");
+
+        Thread.sleep(1000);
+        System.out.println("Using JCACHE to get(IBMHT2044) BondVOInterface <--  DataContainer (bondV=["+bondV+"])");
+
+        Thread.sleep(1000);
         OffHeapInternalCacheEntry entry = dc.get("IBMHY2044");
+
+        Thread.sleep(1000);
+        System.out.println("JCACHE got the (IBMHT2044) BondVOInterface from  DataContainer (entry.getSymbol()=["+
+                ((BondVOInterface) entry).getSymbol() +
+                "])");
+
+        Thread.sleep(1000);
         assert entry.getClass().equals(transienttype());
         assert entry.getLastUsed() <= System.currentTimeMillis();
         long entryLastUsed = entry.getLastUsed();
-        Thread.sleep(100);
+        Thread.sleep(1000);
         entry = dc.get("IBMHY2044");
         assert entry.getLastUsed() > entryLastUsed;
         dc.put("IBMHY2044", bondV, new OffHeapEmbeddedMetadata.OffHeapBuilder().maxIdle(0, TimeUnit.MINUTES).build());
@@ -619,11 +530,11 @@ public class OffHeapDefaultDataContainerTest extends AbstractInfinispanTest {
 
             }
         };
-        dc.put("k", bondV, new OffHeapEmbeddedMetadata.OffHeapBuilder().lifespan(1000, TimeUnit.SECONDS).build());
+        dc.put("IBMHY2044", bondV, new OffHeapEmbeddedMetadata.OffHeapBuilder().lifespan(1000, TimeUnit.SECONDS).build());
         long created1 = dc.get("k").getCreated();
         assert created1 >= now;
         Thread.sleep(100);
-        dc.put("k", bondV, new OffHeapEmbeddedMetadata.OffHeapBuilder().lifespan(1000, TimeUnit.SECONDS).build());
+        dc.put("IBMHY2044", bondV, new OffHeapEmbeddedMetadata.OffHeapBuilder().lifespan(1000, TimeUnit.SECONDS).build());
         long created2 = dc.get("k").getCreated();
         assert created2 > created1 : "Expected " + created2 + " to be greater than " + created1;
     }
@@ -887,16 +798,16 @@ public class OffHeapDefaultDataContainerTest extends AbstractInfinispanTest {
 
             }
         };
-        dc.put("k", bondV, new OffHeapEmbeddedMetadata.OffHeapBuilder().build());
+        dc.put("IBMHY2044", bondV, new OffHeapEmbeddedMetadata.OffHeapBuilder().build());
         OffHeapInternalCacheEntry ice = dc.get("k");
         assert ice.getClass().equals(immortaltype());
         assert ice.toInternalCacheValue().getExpiryTime() == -1;
         assert ice.getMaxIdle() == -1;
         assert ice.getLifespan() == -1;
-        dc.put("k", "v", new OffHeapEmbeddedMetadata.OffHeapBuilder().maxIdle(idle, TimeUnit.MILLISECONDS).build());
+        dc.put("IBMHY2044", bondV, new OffHeapEmbeddedMetadata.OffHeapBuilder().maxIdle(idle, TimeUnit.MILLISECONDS).build());
         long oldTime = System.currentTimeMillis();
         Thread.sleep(100); // for time calc granularity
-        ice = dc.get("k");
+        ice = dc.get("IBMHY2044");
         assert ice.getClass().equals(transienttype());
         assert ice.toInternalCacheValue().getExpiryTime() > -1;
         assert ice.getLastUsed() > oldTime;
@@ -907,7 +818,7 @@ public class OffHeapDefaultDataContainerTest extends AbstractInfinispanTest {
 
         oldTime = System.currentTimeMillis();
         Thread.sleep(100); // for time calc granularity
-        assert dc.get("k") != null;
+        assert dc.get("IBMHY2044") != null;
 
         // check that the last used stamp has been updated on a get
         assert ice.getLastUsed() > oldTime;
@@ -934,7 +845,7 @@ public class OffHeapDefaultDataContainerTest extends AbstractInfinispanTest {
 
     public void testExpirableToImmortalAndBack() {
         String value = "v";
-        dc.put("k", value, new OffHeapEmbeddedMetadata.OffHeapBuilder().lifespan(100, TimeUnit.MINUTES).build());
+        dc.put("IBMHY2044", value, new OffHeapEmbeddedMetadata.OffHeapBuilder().lifespan(100, TimeUnit.MINUTES).build());
         assertContainerEntry(this.mortaltype(), value);
 
         value = "v2";
