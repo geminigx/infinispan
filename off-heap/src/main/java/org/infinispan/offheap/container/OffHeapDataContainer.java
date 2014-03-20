@@ -1,6 +1,7 @@
 package org.infinispan.offheap.container;
 
 import org.infinispan.commons.util.concurrent.ParallelIterableMap;
+import org.infinispan.container.DataContainer;
 import org.infinispan.container.entries.InternalCacheEntry;
 import org.infinispan.factories.annotations.Stop;
 import org.infinispan.factories.scopes.Scope;
