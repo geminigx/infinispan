@@ -7,7 +7,7 @@ import net.openhft.lang.model.constraints.MaxSize;
 /**
  *
  */
-public interface BondVoInterface {
+public interface BondVOInterface {
 
 
 

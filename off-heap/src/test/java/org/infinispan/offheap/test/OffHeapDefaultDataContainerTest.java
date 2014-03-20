@@ -1,4 +1,4 @@
-package org.infinispan.offheap;
+package org.infinispan.offheap.test;
 
 import net.openhft.lang.model.DataValueClasses;
 import org.infinispan.offheap.container.OffHeapDataContainer;
