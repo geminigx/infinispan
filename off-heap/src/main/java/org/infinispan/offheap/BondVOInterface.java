@@ -1,5 +1,7 @@
 package org.infinispan.offheap;
 
+import net.openhft.lang.io.Bytes;
+import net.openhft.lang.model.Byteable;
 import net.openhft.lang.model.constraints.MaxSize;
 //import org.infinispan.offheap.container.entries.OffHeapInternalCacheEntry;
 
@@ -9,11 +11,15 @@ import net.openhft.lang.model.constraints.MaxSize;
  */
 public interface BondVOInterface {
 
-
-
     /* add support for entry based locking */
     void busyLockEntry() throws InterruptedException;
     void unlockEntry();
+
+    void setRecord(Bytes record);
+    Bytes getRecord();
+
+    void setEntry(Bytes entry);
+    Bytes getEntry();
 
     long getIssueDate();
     void setIssueDate(long issueDate);  /* time in millis */

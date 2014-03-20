@@ -1,6 +1,7 @@
 package org.infinispan.offheap.test;
 
 import net.openhft.lang.model.DataValueClasses;
+import org.infinispan.offheap.BondVOInterface;
 import org.infinispan.offheap.container.OffHeapDataContainer;
 import org.infinispan.offheap.container.OffHeapDefaultDataContainer;
 import org.infinispan.offheap.container.OffHeapInternalEntryFactoryImpl;
